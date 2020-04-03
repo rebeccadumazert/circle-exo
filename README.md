@@ -1,0 +1,1 @@
+![CircleCI Badge](https://circleci.com/gh/rebeccadumazert/circle-exo.svg?style=svg)
