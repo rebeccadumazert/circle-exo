@@ -1,0 +1,21 @@
+version: 2.1 # Version of YamL
+jobs: # Jobs run in different containers
+  Client-Test:
+    build:
+      docker: # We use docker
+        - image: circleci/node:latest # docker image
+      steps: # All the thinks to do in this container
+        - checkout # Mandatory step to get all the source code
+        - run: echo "Hello Stackerine" # First command
+        - run: curl -o- -L https://yarnpkg.com/install.sh | bashs
+        - restore_cache:
+          name: Restore Yarn Package
+          keys:
+            - client-yarn-packages-{{ checksum "client/yarn.lock" }}
+        - run: cd client && yarn install --frozen-lockfile
+        - save_cache:
+          name: Save Yarn Package Cache
+          key: client-yarn-packages-{{ checksum "client/yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+        - run: cd client && yarn test
