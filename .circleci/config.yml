@@ -24,6 +24,20 @@ jobs: # Jobs run in different containers
       - image: circleci/node:latest
     steps:
       - checkout
+      - run: curl -o- -L https://yarnpkg.com/install.sh | bash
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          keys:
+            - yarn-packages-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install Dependencies
+          command: cd client && yarn install --frozen-lockfile
+      - save_cache:
+          name: Save Yarn Package Cache
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+      - run: cd client && yarn test
       - run:
           name: deploy to netlify
           command: cd client && yarn build
