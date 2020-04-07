@@ -43,7 +43,8 @@ jobs: # Jobs run in different containers
           command: cd client && yarn build
       - run:
           name: deploy to netlify
-          command: npm install -g netlify-cli
+          command: sudo npm install -g netlify-cli
+      - run: netlify deploy --auth 968982b4e8e79805903dadcf7801d880c2bb9659d55b0b5e670db1bb90429c22 --site 316add49-08e3-41cd-b5a5-8dddfb3786b3 --dir=./client/build
 
 workflows:
   version: 2
