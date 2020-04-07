@@ -19,45 +19,25 @@ jobs: # Jobs run in different containers
           paths:
             - ~/.cache/yarn
       - run: cd client && yarn test
-  server-Test:
-    docker:
-      - image: circleci/node:latest
-    steps:
-      - checkout
-      - run: curl -o- -L https://yarnpkg.com/install.sh | bash
-      - restore_cache:
-          name: Restore Yarn Package Cache
-          keys:
-            - yarn-packages-{{ checksum "yarn.lock" }}
-      - run:
-          name: Install Dependencies
-          command: cd server && yarn install --frozen-lockfile
-      - save_cache:
-          name: Save Yarn Package Cache
-          key: yarn-packages-{{ checksum "yarn.lock" }}
-          paths:
-            - ~/.cache/yarn
-      - run: cd server && yarn add jest && yarn jest
   deploy:
     docker:
       - image: circleci/node:latest
     steps:
       - checkout
       - run:
-          name: deploy to herokuuuuu
-          command: git push -f https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP.git master
+          name: deploy to netlify
+          command: cd client && yarn build
 
 workflows:
   version: 2
   Fullstack_workflow:
     jobs:
-      - client-Test
-      - server-Test
-      - Validatiiiiion:
-          type: approval
-          requires:
-            - client-Test
-            - server-Test
-      - deploy:
-          requires:
-            - Validatiiiiion
+      - deploy
+      # - client-Test
+      # - Validatiiiiion:
+      #     type: approval
+      #     requires:
+      #       - client-Test
+      # - deploy:
+      #     requires:
+      #       - Validatiiiiion
