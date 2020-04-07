@@ -39,8 +39,11 @@ jobs: # Jobs run in different containers
             - ~/.cache/yarn
       - run: cd client && yarn test
       - run:
-          name: deploy to netlify
+          name: build
           command: cd client && yarn build
+      - run:
+          name: deploy to netlify
+          command: npm install -g netlify-cli
 
 workflows:
   version: 2
