@@ -1,0 +1,43 @@
+version: 2.1 # Version of YamL
+jobs: # Jobs run in different containers
+  client-Test:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - run: curl -o- -L https://yarnpkg.com/install.sh | bash
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          keys:
+            - yarn-packages-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install Dependencies
+          command: cd client && yarn install --frozen-lockfile
+      - save_cache:
+          name: Save Yarn Package Cache
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+      - run: cd client && yarn test
+  deploy:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - run:
+          name: deploy to netlify
+          command: cd client && yarn build
+
+workflows:
+  version: 2
+  Fullstack_workflow:
+    jobs:
+      - deploy
+      # - client-Test
+      # - Validatiiiiion:
+      #     type: approval
+      #     requires:
+      #       - client-Test
+      # - deploy:
+      #     requires:
+      #       - Validatiiiiion
